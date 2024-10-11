@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Friends - ADScoin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f0f4f7;
+            background-image: linear-gradient(135deg, #ffffff 0%, #e5f6fd 100%);
+            align-items: center;
+        }
+        h1 {
+            margin-top: 20px;
+            color: #0088cc;
+        }
+        .invite-section {
+            margin-top: 30px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .invite-section img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        .invite-section p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .invite-link {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .invite-link:hover {
+            background-color: #218838;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #006b9c;
+            padding: 15px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 0;
+            font-size: 16px;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .navbar a i {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .navbar a.active {
+            background-color: #004d71;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .close-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Invite Friends - ADScoin</h1>
+    <div class="invite-section">
+        <img src="https://i.suar.me/o496m/l" alt="Invite Friends">
+        <p>Invite your friends to join ADScoin and earn 1000 points for each friend who joins through your invite link!</p>
+        <p>Your invite link:</p>
+        <input type="text" value="https://adscoin.com/invite?ref=yourID" id="inviteLink" readonly style="width: 100%; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 20px;">
+        <button class="invite-link" onclick="copyLink()">Copy Invite Link</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <h2>Friend Invited!</h2>
+            <p>You have successfully invited a friend. 1000 points have been added to your account.</p>
+            <button class="close-btn" id="closeModalBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Copy the invite link
+        function copyLink() {
+            var inviteLink = document.getElementById("inviteLink");
+            inviteLink.select();
+            inviteLink.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+
+            alert('Invite link copied. Share it with your friends!');
+        }
+
+        // Simulate friend joining
+        function checkFriendJoined() {
+            // Check if a friend has joined through the invite link
+            let friendJoined = localStorage.getItem('friendJoined');
+            
+            if (friendJoined) {
+                addPoints(); // Add 1000 points if a friend has joined
+                showModal();
+                localStorage.removeItem('friendJoined'); // Reset the join flag after adding points
+            }
+        }
+
+        // Simulate a friend joining via the invite link (for demonstration)
+        function simulateFriendJoin() {
+            // Normally, this would be handled via the back-end server
+            localStorage.setItem('friendJoined', true); // Simulate friend joining
+        }
+
+        // Add points function
+        function addPoints() {
+            let points = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
+            points += 1000; // Add 1000 points for inviting a friend
+            localStorage.setItem('points', points);
+        }
+
+        // Show the modal
+        function showModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'flex'; // Show modal
+            document.getElementById('closeModalBtn').onclick = function() {
+                modal.style.display = 'none';
+            };
+        }
+
+        // Check if friend joined when the page loads
+        window.onload = function() {
+            checkFriendJoined();
+        }
+
+        // Simulate friend joining for testing purposes
+        // This function would be triggered by the actual friend using the referral link
+        // For this demo, we simulate after 5 seconds
+        setTimeout(simulateFriendJoin, 5000); // Simulate friend joining after 5 seconds
+    </script>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            Home
+        </a>
+        <a href="tasks.html">
+            <i class="fas fa-tasks"></i>
+            Tasks
+        </a>
+        <a href="wallet.html">
+            <i class="fas fa-wallet"></i>
+            Wallet
+        </a>
+        <a href="referral.html" class="active">
+            <i class="fas fa-user-friends"></i>
+            Referral
+        </a>
+    </div>
+
+</body>
+</html>
