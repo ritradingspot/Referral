@@ -134,7 +134,6 @@
         <button class="invite-link" onclick="copyLink()">Copy Invite Link</button>
     </div>
 
-    <!-- Modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <h2>The referral link has been copied successfully!</h2>
@@ -144,46 +143,41 @@
     </div>
 
     <script>
-        // Generate a unique referral ID on first load and store it in localStorage
         function generateReferralId() {
             const storedId = localStorage.getItem('referralId');
             if (!storedId) {
-                const randomId = Math.floor(Math.random() * 10000); // Generate a random number
-                localStorage.setItem('referralId', randomId); // Store it
+                const randomId = Math.floor(Math.random() * 10000);
+                localStorage.setItem('referralId', randomId);
             }
         }
 
-        // Check if a friend has joined
         function checkFriendJoined() {
             const urlParams = new URLSearchParams(window.location.search);
             const referralId = urlParams.get('ADScoinsreferral');
             const myReferralId = localStorage.getItem('referralId');
             
-            if (referralId && referralId !== myReferralId) { // Check if the referral ID matches
+            if (referralId && referralId !== myReferralId) {
                 addPoints();
                 showModal("Friend joined successfully! You've earned 1000 points.");
             }
         }
 
-        // Add points function
         function addPoints() {
             let points = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
-            points += 1000; // Add 1000 points for each referral
+            points += 1000;
             localStorage.setItem('points', points);
         }
 
-        // Copy the invite link
         function copyLink() {
             const referralId = localStorage.getItem('referralId');
             const inviteLink = document.getElementById("inviteLink");
-            inviteLink.value = `https://adscoin.com/invite?ADScoinsreferral=${referralId}`; // Set the invite link
+            inviteLink.value = `https://t.me/ADcoins_bot?start=${referralId}`;
             inviteLink.select();
             inviteLink.setSelectionRange(0, 99999);
             document.execCommand("copy");
             showModal("The referral link has been copied successfully!");
         }
 
-        // Show the modal with a message
         function showModal(message) {
             const modal = document.getElementById('myModal');
             modal.style.display = 'flex';
@@ -193,16 +187,14 @@
             };
         }
 
-        // Set the invite link and check for friend join status on page load
         window.onload = function() {
-            generateReferralId(); // Generate a unique referral ID
+            generateReferralId();
             const inviteLink = document.getElementById("inviteLink");
-            inviteLink.value = `https://adscoin.com/invite?ADScoinsreferral=${localStorage.getItem('referralId')}`; // Set the invite link
-            checkFriendJoined(); // Check if a friend joined
+            inviteLink.value = `https://t.me/ADcoins_bot?start=${localStorage.getItem('referralId')}`;
+            checkFriendJoined();
         }
     </script>
 
-    <!-- Navigation Bar -->
     <div class="navbar">
         <a href="https://ritradingspot.github.io/Home1/">
             <i class="fas fa-home"></i>
