@@ -62,7 +62,7 @@
             bottom: 0;
             width: 100%;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            direction: rtl; /* ترتيب الأزرار من اليمين لليسار */
+            direction: rtl;
         }
         .navbar a {
             color: white;
@@ -104,7 +104,13 @@
         }
         .modal-content h2 {
             margin-top: 0;
-            font-size: 24px;
+            font-size: 20px;
+            color: #28a745;
+        }
+        .modal-content p {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #333;
         }
         .close-btn {
             padding: 10px 20px;
@@ -124,73 +130,76 @@
         <img src="https://i.suar.me/o496m/l" alt="Invite Friends">
         <p>Invite your friends to join ADScoin and earn 1000 points for each friend who joins through your invite link!</p>
         <p>Your invite link:</p>
-        <input type="text" value="https://adscoin.com/invite?ref=yourID" id="inviteLink" readonly style="width: 100%; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 20px;">
+        <input type="text" id="inviteLink" readonly style="width: 100%; padding: 10px; text-align: center; border-radius: 5px; margin-bottom: 20px;">
         <button class="invite-link" onclick="copyLink()">Copy Invite Link</button>
     </div>
 
     <!-- Modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
-            <h2>Friend Invited!</h2>
-            <p>You have successfully invited a friend. 1000 points have been added to your account.</p>
+            <h2>The referral link has been copied successfully!</h2>
+            <p>You can now share the link with your friends.</p>
             <button class="close-btn" id="closeModalBtn">Close</button>
         </div>
     </div>
 
     <script>
-        // Copy the invite link
-        function copyLink() {
-            var inviteLink = document.getElementById("inviteLink");
-            inviteLink.select();
-            inviteLink.setSelectionRange(0, 99999); // For mobile devices
-            document.execCommand("copy");
-
-            alert('Invite link copied. Share it with your friends!');
-        }
-
-        // Simulate friend joining
-        function checkFriendJoined() {
-            // Check if a friend has joined through the invite link
-            let friendJoined = localStorage.getItem('friendJoined');
-            
-            if (friendJoined) {
-                addPoints(); // Add 1000 points if a friend has joined
-                showModal();
-                localStorage.removeItem('friendJoined'); // Reset the join flag after adding points
+        // Generate a unique referral ID on first load and store it in localStorage
+        function generateReferralId() {
+            const storedId = localStorage.getItem('referralId');
+            if (!storedId) {
+                const randomId = Math.floor(Math.random() * 10000); // Generate a random number
+                localStorage.setItem('referralId', randomId); // Store it
             }
         }
 
-        // Simulate a friend joining via the invite link (for demonstration)
-        function simulateFriendJoin() {
-            // Normally, this would be handled via the back-end server
-            localStorage.setItem('friendJoined', true); // Simulate friend joining
+        // Check if a friend has joined
+        function checkFriendJoined() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referralId = urlParams.get('ADScoinsreferral');
+            const myReferralId = localStorage.getItem('referralId');
+            
+            if (referralId && referralId !== myReferralId) { // Check if the referral ID matches
+                addPoints();
+                showModal("Friend joined successfully! You've earned 1000 points.");
+            }
         }
 
         // Add points function
         function addPoints() {
             let points = localStorage.getItem('points') ? parseInt(localStorage.getItem('points')) : 0;
-            points += 1000; // Add 1000 points for inviting a friend
+            points += 1000; // Add 1000 points for each referral
             localStorage.setItem('points', points);
         }
 
-        // Show the modal
-        function showModal() {
+        // Copy the invite link
+        function copyLink() {
+            const referralId = localStorage.getItem('referralId');
+            const inviteLink = document.getElementById("inviteLink");
+            inviteLink.value = `https://adscoin.com/invite?ADScoinsreferral=${referralId}`; // Set the invite link
+            inviteLink.select();
+            inviteLink.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            showModal("The referral link has been copied successfully!");
+        }
+
+        // Show the modal with a message
+        function showModal(message) {
             const modal = document.getElementById('myModal');
-            modal.style.display = 'flex'; // Show modal
+            modal.style.display = 'flex';
+            modal.querySelector("h2").textContent = message;
             document.getElementById('closeModalBtn').onclick = function() {
                 modal.style.display = 'none';
             };
         }
 
-        // Check if friend joined when the page loads
+        // Set the invite link and check for friend join status on page load
         window.onload = function() {
-            checkFriendJoined();
+            generateReferralId(); // Generate a unique referral ID
+            const inviteLink = document.getElementById("inviteLink");
+            inviteLink.value = `https://adscoin.com/invite?ADScoinsreferral=${localStorage.getItem('referralId')}`; // Set the invite link
+            checkFriendJoined(); // Check if a friend joined
         }
-
-        // Simulate friend joining for testing purposes
-        // This function would be triggered by the actual friend using the referral link
-        // For this demo, we simulate after 5 seconds
-        setTimeout(simulateFriendJoin, 5000); // Simulate friend joining after 5 seconds
     </script>
 
     <!-- Navigation Bar -->
